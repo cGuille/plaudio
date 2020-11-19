@@ -6,6 +6,7 @@
             this.container = container;
             this.nowPlayingDisplays = Array.from(container.querySelectorAll('.plaudio-now-playing'));
             this.timerDisplays = Array.from(container.querySelectorAll('.plaudio-timer'));
+            this.durationDisplays = Array.from(container.querySelectorAll('.plaudio-duration'));
 
             this.loadTracks();
             this.initAudio();
@@ -47,7 +48,12 @@
 
             this.audio.addEventListener('timeupdate', () => {
                 const time = this.audio.currentTime;
-                this.timerDisplays.forEach(elt => updateTimer(elt, time));
+                this.timerDisplays.forEach(elt => updateTime(elt, time));
+            });
+
+            this.audio.addEventListener('durationchange', () => {
+                const duration = this.audio.duration;
+                this.durationDisplays.forEach(elt => updateTime(elt, duration));
             });
 
             this.audio.addEventListener('ended', () => this.next());
@@ -112,7 +118,7 @@
             this.audio.src = track.url;
 
             this.nowPlayingDisplays.forEach(elt => elt.textContent = track.label);
-            this.timerDisplays.forEach(elt => updateTimer(elt, 0));
+            this.timerDisplays.forEach(elt => updateTime(elt, 0));
         }
 
         initControls() {
@@ -186,8 +192,8 @@
         }
     }
 
-    function updateTimer(timerElt, time) {
-        timerElt.textContent = new Date(time * 1000).toISOString().substr(11, 8);
+    function updateTime(elt, time) {
+        elt.textContent = new Date(time * 1000).toISOString().substr(11, 8);
     }
 
     window.plaudio = {
