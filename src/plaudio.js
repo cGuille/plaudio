@@ -193,7 +193,24 @@
     }
 
     function updateTime(elt, time) {
-        elt.textContent = new Date(time * 1000).toISOString().substr(11, 8);
+        const minutes = Math.round(time / 60);
+        const seconds = Math.round(time % 60);
+
+        let formatted = '';
+
+        if (minutes < 10) {
+            formatted += '0';
+        }
+        formatted += minutes;
+
+        formatted += ':'
+
+        if (seconds < 10) {
+            formatted += '0';
+        }
+        formatted += seconds;
+
+        elt.textContent = formatted;
     }
 
     window.plaudio = {
