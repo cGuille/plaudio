@@ -246,8 +246,8 @@
     }
 
     function updateTime(elt, time) {
-        const minutes = Math.round(time / 60);
-        const seconds = Math.round(time % 60);
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
 
         let formatted = '';
 
