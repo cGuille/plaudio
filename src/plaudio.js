@@ -56,6 +56,7 @@
             this.audio.addEventListener('durationchange', () => {
                 const duration = this.audio.duration;
                 this.durationDisplays.forEach(elt => updateTime(elt, duration));
+                this.updateSeekerControls();
             });
 
             this.audio.addEventListener('ended', () => this.next());
