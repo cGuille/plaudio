@@ -49,6 +49,8 @@
             this.audio.addEventListener('timeupdate', () => {
                 const time = this.audio.currentTime;
                 this.timerDisplays.forEach(elt => updateTime(elt, time));
+
+                this.updateSeekerControls();
             });
 
             this.audio.addEventListener('durationchange', () => {
@@ -124,6 +126,7 @@
         initControls() {
             this.initPlayPauseControls();
             this.initPrevNextControls();
+            this.initSeekerControls();
         }
 
         initPlayPauseControls() {
@@ -148,6 +151,44 @@
             this.container.querySelectorAll('.plaudio-next').forEach(element => {
                 element.addEventListener('click', () => this.next());
             });
+        }
+
+        initSeekerControls() {
+            this.seekerControls = Array.from(this.container.querySelectorAll('.plaudio-seeker'));
+
+            const markAsSeeking = event => {
+                event.target.seeking = true;
+            };
+
+            const updateCurrentTime = event => {
+                this.audio.currentTime = event.target.value;
+                event.target.seeking = false;
+
+                this.play();
+            };
+
+            this.seekerControls.forEach(element => {
+                element.addEventListener('input', markAsSeeking);
+                element.addEventListener('change', updateCurrentTime);
+            });
+
+            this.updateSeekerControls();
+        }
+
+        updateSeekerControls() {
+            const duration = this.audio.duration;
+            if (isNaN(duration)) {
+                return;
+            }
+
+            const time = this.audio.currentTime;
+
+            this.seekerControls
+                .filter(element => !element.seeking)
+                .forEach(element => {
+                    element.max = duration;
+                    element.value = time;
+                });
         }
     }
 
