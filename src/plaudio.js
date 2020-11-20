@@ -4,13 +4,27 @@
     class Plaudio {
         constructor(container) {
             this.container = container;
-            this.nowPlayingDisplays = Array.from(container.querySelectorAll('.plaudio-now-playing'));
-            this.timerDisplays = Array.from(container.querySelectorAll('.plaudio-timer'));
-            this.durationDisplays = Array.from(container.querySelectorAll('.plaudio-duration'));
+            this.widgets = [];
 
             this.loadTracks();
             this.initAudio();
-            this.initControls();
+
+            this.register(new NowPlayingWidget());
+            this.register(new TimerWidget());
+            this.register(new DurationWidget());
+            this.register(new PrevWidget());
+            this.register(new NextWidget());
+            this.register(new PlayPauseWidget());
+            this.register(new DeltaSeekerWidget());
+            this.register(new SeekerWidget());
+        }
+
+        register(widget) {
+            widget.attachTo(this);
+            widget.plug(Array.from(this.container.querySelectorAll(widget.selector)));
+            widget.initialize();
+
+            this.widgets.push(widget);
         }
 
         loadTracks() {
@@ -32,31 +46,24 @@
                 this.container.classList.remove('paused');
                 this.container.classList.add('playing');
 
-                this.container.querySelectorAll('.plaudio-play-pause').forEach(element => {
-                    setPlayPauseState(element, 'playing');
-                });
+                this.widgets.forEach(widget => widget.handlePlay());
             });
 
             this.audio.addEventListener('pause', () => {
                 this.container.classList.remove('playing');
                 this.container.classList.add('paused');
 
-                this.container.querySelectorAll('.plaudio-play-pause').forEach(element => {
-                    setPlayPauseState(element, 'paused');
-                });
+                this.widgets.forEach(widget => widget.handlePause());
             });
 
             this.audio.addEventListener('timeupdate', () => {
                 const time = this.audio.currentTime;
-                this.timerDisplays.forEach(elt => updateTime(elt, time));
-
-                this.updateSeekerControls();
+                this.widgets.forEach(widget => widget.updateTime(time));
             });
 
             this.audio.addEventListener('durationchange', () => {
                 const duration = this.audio.duration;
-                this.durationDisplays.forEach(elt => updateTime(elt, duration));
-                this.updateSeekerControls();
+                this.widgets.forEach(widget => widget.updateDuration(duration));
             });
 
             this.audio.addEventListener('ended', () => this.next());
@@ -110,98 +117,22 @@
             this.audio.pause();
         }
 
-        selectTrack(track) {
-            if (this.currentTrack) {
-                this.currentTrack.deselect();
+        togglePlayPause() {
+            this.audio.paused ? this.play() : this.pause();
+        }
+
+        selectTrack(newTrack) {
+            const previousTrack = this.currentTrack;
+            this.currentTrack = newTrack;
+
+            if (previousTrack) {
+                previousTrack.deselect();
             }
+            newTrack.select();
 
-            this.currentTrack = track;
-            this.currentTrack.select();
+            this.audio.src = newTrack.url;
 
-            this.audio.src = track.url;
-
-            this.nowPlayingDisplays.forEach(elt => elt.textContent = track.label);
-            this.timerDisplays.forEach(elt => updateTime(elt, 0));
-        }
-
-        initControls() {
-            this.initPlayPauseControls();
-            this.initPrevNextControls();
-            this.initSeekControls();
-            this.initSeekerControls();
-        }
-
-        initPlayPauseControls() {
-            this.container.querySelectorAll('.plaudio-play-pause').forEach(element => {
-                setPlayPauseState(element, 'paused');
-
-                element.addEventListener('click', () => {
-                    if (this.audio.paused) {
-                        this.play();
-                    } else {
-                        this.pause();
-                    }
-                });
-            });
-        }
-
-        initPrevNextControls() {
-            this.container.querySelectorAll('.plaudio-prev').forEach(element => {
-                element.addEventListener('click', () => this.prev());
-            });
-
-            this.container.querySelectorAll('.plaudio-next').forEach(element => {
-                element.addEventListener('click', () => this.next());
-            });
-        }
-
-        initSeekControls() {
-            this.container.querySelectorAll('.plaudio-seek').forEach(element => {
-                const handler = event => {
-                    const delta = parseFloat(event.target.dataset.seek);
-                    this.audio.currentTime += delta;
-                };
-
-                element.addEventListener('click', handler);
-            });
-        }
-
-        initSeekerControls() {
-            this.seekerControls = Array.from(this.container.querySelectorAll('.plaudio-seeker'));
-
-            const markAsSeeking = event => {
-                event.target.seeking = true;
-            };
-
-            const updateCurrentTime = event => {
-                this.audio.currentTime = event.target.value;
-                event.target.seeking = false;
-
-                this.play();
-            };
-
-            this.seekerControls.forEach(element => {
-                element.addEventListener('input', markAsSeeking);
-                element.addEventListener('change', updateCurrentTime);
-            });
-
-            this.updateSeekerControls();
-        }
-
-        updateSeekerControls() {
-            const duration = this.audio.duration;
-            if (isNaN(duration)) {
-                return;
-            }
-
-            const time = this.audio.currentTime;
-
-            this.seekerControls
-                .filter(element => !element.seeking)
-                .forEach(element => {
-                    element.max = duration;
-                    element.value = time;
-                });
+            this.widgets.forEach(widget => widget.updateTrack(previousTrack, newTrack));
         }
     }
 
@@ -238,15 +169,186 @@
         }
     }
 
-    function setPlayPauseState(element, state) {
-        if (state === 'playing') {
-            element.innerHTML = element.dataset.pauseHtml;
-        } else if (state === 'paused') {
-            element.innerHTML = element.dataset.playHtml;
+    class Widget {
+        get selector() {
+            throw new Error(`Not implemented in ${this.constructor.name}`);
+        }
+
+        attachTo(owner) {
+            this.owner = owner;
+        }
+
+        plug(elements) {
+            this.elements = elements;
+        }
+
+        initialize() {}
+        handlePlay() {}
+        handlePause() {}
+        updateTrack(previousT, newTrack) {}
+        updateTime(time) {}
+        updateDuration(duration) {}
+    }
+
+    class ClickWidget extends Widget {
+        initialize() {
+            const clickHandler = this.onClick.bind(this);
+
+            this.elements.forEach(element => {
+                element.addEventListener('click', clickHandler);
+            });
+        }
+
+        onClick() {
+            throw new Error(`Not implemented in ${this.constructor.name}`);
         }
     }
 
-    function updateTime(elt, time) {
+    class NowPlayingWidget extends Widget {
+        get selector() {
+            return '.plaudio-now-playing';
+        }
+
+        updateTrack(previousT, newTrack) {
+            this.elements.forEach(element => element.textContent = newTrack.label);
+        }
+    }
+
+    class TimerWidget extends Widget {
+        get selector() {
+            return '.plaudio-timer';
+        }
+
+        initialize() {
+            this.updateTime(0);
+        }
+
+        updateTime(time) {
+            this.elements.forEach(element => element.textContent = formatTime(time));
+        }
+    }
+
+    class DurationWidget extends Widget {
+        get selector() {
+            return '.plaudio-duration';
+        }
+
+        initialize() {
+            this.updateDuration(0);
+        }
+
+        updateDuration(duration) {
+            this.elements.forEach(element => element.textContent = formatTime(duration));
+        }
+    }
+
+    class PlayPauseWidget extends Widget {
+        get selector() {
+            return '.plaudio-play-pause';
+        }
+
+        initialize() {
+            const clickHandler = () => this.owner.togglePlayPause();
+
+            this.elements.forEach(element => {
+                element.addEventListener('click', clickHandler);
+            });
+
+            this.handlePause();
+        }
+
+        handlePlay() {
+            this.elements.forEach(element => element.innerHTML = element.dataset.pauseHtml);
+        }
+
+        handlePause() {
+            this.elements.forEach(element => element.innerHTML = element.dataset.playHtml);
+        }
+    }
+
+    class PrevWidget extends ClickWidget {
+        get selector() {
+            return '.plaudio-prev';
+        }
+
+        onClick() {
+            this.owner.prev();
+        }
+    }
+
+    class NextWidget extends ClickWidget {
+        get selector() {
+            return '.plaudio-next';
+        }
+
+        onClick() {
+            this.owner.next();
+        }
+    }
+
+    class DeltaSeekerWidget extends ClickWidget {
+        get selector() {
+            return '.plaudio-seek';
+        }
+
+        onClick(event) {
+            const delta = parseFloat(event.target.dataset.seek);
+            this.owner.audio.currentTime += delta;
+        }
+    }
+
+    class SeekerWidget extends Widget {
+        get selector() {
+            return '.plaudio-seeker';
+        }
+
+        initialize() {
+            const changeHandler = this.updateCurrentTime.bind(this);
+
+            this.elements.forEach(element => {
+                element.addEventListener('input', this.markAsSeeking);
+                element.addEventListener('change', changeHandler);
+            });
+
+            this.time = 0;
+            this.duration = null;
+
+            this.updateView();
+        }
+
+        updateTime(time) {
+            this.time = time;
+            this.updateView();
+        }
+
+        updateDuration(duration) {
+            this.duration = duration;
+            this.updateView();
+        }
+
+        markAsSeeking(event) {
+            event.target.seeking = true;
+        }
+
+        updateCurrentTime(event) {
+            this.owner.audio.currentTime = event.target.value;
+            event.target.seeking = false;
+        }
+
+        updateView() {
+            this.elements
+                .filter(element => !element.seeking)
+                .forEach(element => {
+                    if (this.duration !== null) {
+                        element.max = this.duration;
+                    }
+
+                    element.value = this.time;
+                });
+        }
+    }
+
+    function formatTime(time) {
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
 
@@ -264,7 +366,7 @@
         }
         formatted += seconds;
 
-        elt.textContent = formatted;
+        return formatted;
     }
 
     window.plaudio = {
