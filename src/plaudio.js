@@ -126,6 +126,7 @@
         initControls() {
             this.initPlayPauseControls();
             this.initPrevNextControls();
+            this.initSeekControls();
             this.initSeekerControls();
         }
 
@@ -150,6 +151,17 @@
 
             this.container.querySelectorAll('.plaudio-next').forEach(element => {
                 element.addEventListener('click', () => this.next());
+            });
+        }
+
+        initSeekControls() {
+            this.container.querySelectorAll('.plaudio-seek').forEach(element => {
+                const handler = event => {
+                    const delta = parseFloat(event.target.dataset.seek);
+                    this.audio.currentTime += delta;
+                };
+
+                element.addEventListener('click', handler);
             });
         }
 
