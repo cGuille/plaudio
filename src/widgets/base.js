@@ -15,4 +15,5 @@ export default class Widget {
     updateTrack(previousT, newTrack) {}
     updateTime(time) {}
     updateDuration(duration) {}
+    updateProgress(buffered) {}
 }

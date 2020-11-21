@@ -8,6 +8,7 @@ import PlayPauseWidget from './widgets/playpause';
 import DeltaSeekerWidget from './widgets/deltaseeker';
 import SeekerWidget from './widgets/seeker';
 import KeybindsWidget from './widgets/keybinds';
+import BufferingWidget from './widgets/buffering';
 
 export default class Player {
     constructor(container) {
@@ -26,6 +27,7 @@ export default class Player {
         this.register(new DeltaSeekerWidget());
         this.register(new SeekerWidget());
         this.register(new KeybindsWidget());
+        this.register(new BufferingWidget());
     }
 
     register(widget) {
@@ -70,6 +72,11 @@ export default class Player {
         this.audio.addEventListener('durationchange', () => {
             const duration = this.audio.duration;
             this.widgets.forEach(widget => widget.updateDuration(duration));
+        });
+
+        this.audio.addEventListener('progress', () => {
+            const buffered = this.audio.buffered;
+            this.widgets.forEach(widget => widget.updateProgress(buffered));
         });
 
         this.audio.addEventListener('ended', () => this.next());

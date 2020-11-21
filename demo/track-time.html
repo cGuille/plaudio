@@ -4,6 +4,17 @@
 <head>
     <meta charset="utf-8">
     <title>plaudio — track time</title>
+
+    <style>
+        .plaudio-buffering {
+            background-color: lightgrey;
+            height: 20px;
+        }
+
+        .plaudio-buffering > * {
+            background-color: lightblue;
+        }
+    </style>
 </head>
 
 <body>
@@ -24,6 +35,7 @@
             </div>
             <div>
                 <input type="range" class="plaudio-seeker" />
+                <div class="plaudio-buffering"></div>
             </div>
             <div>
                 Now playing:
