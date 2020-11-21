@@ -3,17 +3,17 @@
 
 <head>
     <meta charset="utf-8">
-    <title>plaudio demo</title>
+    <title>plaudio — track time</title>
 </head>
 
 <body>
-    <h1>plaudio demo</h1>
+    <h1>plaudio — track time</h1>
     <section class="plaudio"
         data-keybind-play-pause="Space | KeyP | KeyP+shift"
         data-keybind-prev="ArrowLeft+ctrl | PageUp"
         data-keybind-next="ArrowRight+ctrl | PageDown"
-        data-keybind-seek-delta="ArrowLeft: -15 | ArrowRight: +30 | shift+ArrowLeft: -60 | shift+ArrowRight: +60"
-        >
+        data-keybind-seek-delta="ArrowLeft: -15 | ArrowRight: +30 | shift+ArrowLeft: -60 | shift+ArrowRight: +60">
+
         <menu>
             <p>
                 <button class="plaudio-prev">Previous</button>
@@ -38,61 +38,30 @@
         <ol>
             <li class="plaudio-track"
                 data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap00_Introduction.mp3">
-                First track</li>
-            <li class="plaudio-track start-here" data-start-at="35.5"
+                First track
+            </li>
+            <li class="plaudio-track"
                 data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap01_Les_trois_presents_de_M_d_Artagnan_pere.mp3">
-                Second track</li>
+                Second track
+            </li>
             <li class="plaudio-track"
                 data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap02_L_antichambre_de_M_de_Treville.mp3">
-                Third track</li>
+                Third track
+            </li>
         </ol>
     </section>
 
-    <script src="dist/plaudio.js"></script>
-
-    <!--
-        Use this if you want to automatically easily initialize any plaudio container in the document:
-        <script>plaudio.all();</script>
-    -->
-
-    <!--
-        Use this if you want to be able to manipulate your plaudio objects:
-    -->
+    <script src="../dist/plaudio.js"></script>
     <script>
         const player = plaudio.new(document.querySelector('.plaudio'));
 
-        // For instance, we could use the timeupdate event to save the current
-        // time for the track being played.
-
-        // This function would save the time for the given track:
-        function saveTrackTime(track, time) {
-            console.log('Dummy save of', track.label, 'at', time);
+        function logTime(track, time) {
+            console.log('TRACK', track.label, time);
         }
 
-        // We create a throttled version of the save function, so that we do not
-        // persist data too often.
-        const throttledSave = throttle(saveTrackTime, 3000);
-
-        // And then we set up the event listener:
         player.audio.addEventListener('timeupdate', () => {
-            throttledSave(player.currentTrack, player.audio.currentTime);
+            logTime(player.currentTrack, player.audio.currentTime);
         });
-
-        // Quick & dirty throttling decorator:
-        function throttle(fn, delay) {
-            let throttling = false;
-
-            return function throttled() {
-                if (throttling) {
-                    return;
-                }
-
-                throttling = true;
-                setTimeout(() => throttling = false, delay);
-
-                fn.apply(this, arguments);
-            };
-        }
     </script>
 </body>
 

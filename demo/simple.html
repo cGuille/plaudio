@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>plaudio — simple demo</title>
+</head>
+
+<body>
+    <h1>plaudio — simple demo</h1>
+    <section class="plaudio"
+        data-keybind-play-pause="Space | KeyP | KeyP+shift"
+        data-keybind-prev="ArrowLeft+ctrl | PageUp"
+        data-keybind-next="ArrowRight+ctrl | PageDown"
+        data-keybind-seek-delta="ArrowLeft: -15 | ArrowRight: +30 | shift+ArrowLeft: -60 | shift+ArrowRight: +60">
+
+        <menu>
+            <p>
+                <button class="plaudio-prev">Previous</button>
+                <button class="plaudio-seek" data-seek="-15">-15s</button>
+                <button class="plaudio-play-pause" data-play-html="Play" data-pause-html="Pause"></button>
+                <button class="plaudio-seek" data-seek="30">+30s</button>
+                <button class="plaudio-next">Next</button>
+            </p>
+            <p>
+                <input type="range" class="plaudio-seeker"></div>
+            </p>
+            <p>
+                Now playing:
+                <span class="plaudio-now-playing"></span>
+                -
+                <span class="plaudio-timer"></span>
+                /
+                <span class="plaudio-duration"></span>
+            </p>
+        </menu>
+
+        <ol>
+            <li class="plaudio-track"
+                data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap00_Introduction.mp3">
+                First track
+            </li>
+            <li class="plaudio-track start-here" data-start-at="300"
+                data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap01_Les_trois_presents_de_M_d_Artagnan_pere.mp3">
+                Second track
+            </li>
+            <li class="plaudio-track"
+                data-url="http://www.litteratureaudio.org/mp3/Alexandre_Dumas_-_Les_Trois_Mousquetaires_Chap02_L_antichambre_de_M_de_Treville.mp3">
+                Third track
+            </li>
+        </ol>
+    </section>
+
+    <script src="../dist/plaudio.js"></script>
+    <script>plaudio.all();</script>
+</body>
+
+</html>
