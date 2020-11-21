@@ -18,9 +18,6 @@ class Plaudio {
 
     register(widget) {
         widget.attachTo(this);
-        widget.plug(Array.from(this.container.querySelectorAll(widget.selector)));
-        widget.initialize();
-
         this.widgets.push(widget);
     }
 

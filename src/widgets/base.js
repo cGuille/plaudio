@@ -1,14 +1,12 @@
 class Widget {
-    get selector() {
-        throw new Error(`Not implemented in ${this.constructor.name}`);
-    }
-
     attachTo(owner) {
         this.owner = owner;
-    }
 
-    plug(elements) {
-        this.elements = elements;
+        if (this.selector) {
+            this.elements = Array.from(owner.container.querySelectorAll(this.selector));
+        }
+
+        this.initialize();
     }
 
     initialize() {}

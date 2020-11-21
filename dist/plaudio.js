@@ -25,16 +25,14 @@ function formatTime(time) {
 
 
 class Widget {
-    get selector() {
-        throw new Error(`Not implemented in ${this.constructor.name}`);
-    }
-
     attachTo(owner) {
         this.owner = owner;
-    }
 
-    plug(elements) {
-        this.elements = elements;
+        if (this.selector) {
+            this.elements = Array.from(owner.container.querySelectorAll(this.selector));
+        }
+
+        this.initialize();
     }
 
     initialize() {}
@@ -267,9 +265,6 @@ class Plaudio {
 
     register(widget) {
         widget.attachTo(this);
-        widget.plug(Array.from(this.container.querySelectorAll(widget.selector)));
-        widget.initialize();
-
         this.widgets.push(widget);
     }
 
