@@ -14,6 +14,7 @@ SOURCES=(
     src/widgets/next.js
     src/widgets/deltaseeker.js
     src/widgets/seeker.js
+    src/widgets/keybinds.js
     src/track.js
     src/plaudio.js
     src/exports.js

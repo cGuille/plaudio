@@ -14,6 +14,7 @@ class Plaudio {
         this.register(new PlayPauseWidget());
         this.register(new DeltaSeekerWidget());
         this.register(new SeekerWidget());
+        this.register(new KeybindsWidget());
     }
 
     register(widget) {
