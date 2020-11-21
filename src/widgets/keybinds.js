@@ -1,4 +1,7 @@
-class KeybindsWidget extends Widget {
+import { isUpperCase } from '../functions';
+import Widget from './base';
+
+export default class KeybindsWidget extends Widget {
     initialize() {
         const bindingDataSetItems = [
             'PlayPause',
@@ -93,7 +96,7 @@ class KeybindsWidget extends Widget {
             .split('+')
             .map(s => s.trim())
             .reduce((keys, keyword) => {
-                if (this.isUpperCase(keyword[0])) {
+                if (isUpperCase(keyword[0])) {
                     keys.code = keyword;
                 } else {
                     keys[keyword] = true;
@@ -106,16 +109,5 @@ class KeybindsWidget extends Widget {
 
     parseArgs(argsString) {
         return argsString.split(',').map(s => s.trim());
-    }
-
-    isUpperCase(char) {
-        const isUpper = char === char.toUpperCase();
-        const isLower = char === char.toLowerCase();
-
-        if ((isUpper && isLower) || (!isUpper && !isLower)) {
-            throw new Error(`Unsupported char: '${char}'`);
-        }
-
-        return isUpper;
     }
 }

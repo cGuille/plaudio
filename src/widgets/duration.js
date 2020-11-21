@@ -1,4 +1,7 @@
-class DurationWidget extends Widget {
+import { formatTime } from '../functions'
+import Widget from './base';
+
+export default class DurationWidget extends Widget {
     get selector() {
         return '.plaudio-duration';
     }

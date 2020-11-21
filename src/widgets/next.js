@@ -1,4 +1,6 @@
-class NextWidget extends ClickWidget {
+import ClickWidget from './click';
+
+export default class NextWidget extends ClickWidget {
     get selector() {
         return '.plaudio-next';
     }

@@ -1,4 +1,4 @@
-class Widget {
+export default class Widget {
     attachTo(owner) {
         this.owner = owner;
 

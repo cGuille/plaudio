@@ -1,4 +1,6 @@
-class SeekerWidget extends Widget {
+import Widget from './base';
+
+export default class SeekerWidget extends Widget {
     get selector() {
         return '.plaudio-seeker';
     }

@@ -53,7 +53,7 @@
 
     <script src="../dist/plaudio.js"></script>
     <script>
-        const player = plaudio.new(document.querySelector('.plaudio'));
+        const player = plaudio.player(document.querySelector('.plaudio'));
 
         function logTime(track, time) {
             console.log('TRACK', track.label, time);

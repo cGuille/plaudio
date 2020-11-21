@@ -1,4 +1,6 @@
-class ClickWidget extends Widget {
+import Widget from './base';
+
+export default class ClickWidget extends Widget {
     initialize() {
         const clickHandler = this.onClick.bind(this);
 

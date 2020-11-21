@@ -1,4 +1,7 @@
-class TimerWidget extends Widget {
+import { formatTime } from '../functions'
+import Widget from './base';
+
+export default class TimerWidget extends Widget {
     get selector() {
         return '.plaudio-timer';
     }

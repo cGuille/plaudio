@@ -1,3 +1,5 @@
+export { formatTime, isUpperCase };
+
 function formatTime(time) {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -17,4 +19,15 @@ function formatTime(time) {
     formatted += seconds;
 
     return formatted;
+}
+
+function isUpperCase(char) {
+    const isUpper = char === char.toUpperCase();
+    const isLower = char === char.toLowerCase();
+
+    if ((isUpper && isLower) || (!isUpper && !isLower)) {
+        throw new Error(`Unsupported char: '${char}'`);
+    }
+
+    return isUpper;
 }

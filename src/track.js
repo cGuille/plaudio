@@ -1,4 +1,4 @@
-class Track {
+export default class Track {
     constructor(element, index) {
         this.element = element;
         this.index = index;

@@ -1,4 +1,6 @@
-class DeltaSeekerWidget extends ClickWidget {
+import ClickWidget from './click';
+
+export default class DeltaSeekerWidget extends ClickWidget {
     get selector() {
         return '.plaudio-seek';
     }

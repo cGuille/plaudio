@@ -1,4 +1,6 @@
-class NowPlayingWidget extends Widget {
+import Widget from './base';
+
+export default class NowPlayingWidget extends Widget {
     get selector() {
         return '.plaudio-now-playing';
     }

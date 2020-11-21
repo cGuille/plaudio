@@ -1,4 +1,15 @@
-class Plaudio {
+import Track from './track';
+import NowPlayingWidget from './widgets/nowplaying';
+import TimerWidget from './widgets/timer';
+import DurationWidget from './widgets/duration';
+import PrevWidget from './widgets/prev';
+import NextWidget from './widgets/next';
+import PlayPauseWidget from './widgets/playpause';
+import DeltaSeekerWidget from './widgets/deltaseeker';
+import SeekerWidget from './widgets/seeker';
+import KeybindsWidget from './widgets/keybinds';
+
+export default class Player {
     constructor(container) {
         this.container = container;
         this.widgets = [];

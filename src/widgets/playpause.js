@@ -1,4 +1,6 @@
-class PlayPauseWidget extends Widget {
+import Widget from './base';
+
+export default class PlayPauseWidget extends Widget {
     get selector() {
         return '.plaudio-play-pause';
     }
