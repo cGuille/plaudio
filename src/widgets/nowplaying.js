@@ -5,7 +5,15 @@ export default class NowPlayingWidget extends Widget {
         return '.plaudio-now-playing';
     }
 
+    initialize() {
+        this.updateView(this.owner.currentTrack);
+    }
+
     updateTrack(previousT, newTrack) {
-        this.elements.forEach(element => element.textContent = newTrack.label);
+        this.updateView(newTrack);
+    }
+
+    updateView(track) {
+        this.elements.forEach(element => element.textContent = track.label);
     }
 }
