@@ -13,7 +13,13 @@ export default class Track {
     }
 
     get label() {
-        return this.element.textContent.trim();
+        let labelElement = this.element.querySelector('.plaudio-track-label');
+
+        if (!labelElement) {
+            labelElement = this.element;
+        }
+
+        return labelElement.textContent.trim();
     }
 
     get url() {
